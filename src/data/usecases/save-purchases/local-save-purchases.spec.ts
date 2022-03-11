@@ -46,13 +46,16 @@ describe('LocalSAvePurchases', () => {
         const purchases = mockPurchases();
 
 
-        await sut.save(purchases);
+        const promisse = sut.save(purchases);
         expect(cacheStore.deleteCallsCount).toBe(1);
         expect(cacheStore.insertCallsCount).toBe(1);
         expect(cacheStore.insertValues).toEqual({
             timestamp,
             value: purchases
         });
+        await expect(promisse).resolves.not.toThrow();
+        await expect(promisse).resolves.toBeFalsy();
+
 
     })
 
