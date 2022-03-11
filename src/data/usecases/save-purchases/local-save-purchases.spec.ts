@@ -5,9 +5,9 @@ import {LocalSavePurchases} from '@/data/usecases/'
 type SutTypes = {sut: LocalSavePurchases,
                  cacheStore: CacheStoreSpy };
 
-const makeSut = (): SutTypes => {
+const makeSut = (timestamp = new Date()): SutTypes => {
     const cacheStore = new CacheStoreSpy()
-    const sut = new LocalSavePurchases(cacheStore);
+    const sut = new LocalSavePurchases(cacheStore,timestamp);
     return {sut, cacheStore}
 }
 
@@ -41,13 +41,18 @@ describe('LocalSAvePurchases', () => {
 
     test('Should insert new cache if delete succeds', async () => {
 
+        const timestamp = new Date();
         const {sut,cacheStore} = makeSut();
         const purchases = mockPurchases();
+
 
         await sut.save(purchases);
         expect(cacheStore.deleteCallsCount).toBe(1);
         expect(cacheStore.insertCallsCount).toBe(1);
-        expect(cacheStore.insertValues).toEqual(purchases);
+        expect(cacheStore.insertValues).toEqual({
+            timestamp,
+            value: purchases
+        });
 
     })
 
