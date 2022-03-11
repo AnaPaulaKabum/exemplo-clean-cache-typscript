@@ -27,5 +27,4 @@ export class CacheStoreSpy implements ICacheStore{
     simuleInsertError():void{
         jest.spyOn(CacheStoreSpy.prototype,'insert').mockImplementationOnce(() => {throw new Error()});
     }
-
 }

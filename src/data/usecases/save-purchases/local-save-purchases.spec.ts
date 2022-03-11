@@ -45,7 +45,6 @@ describe('LocalSAvePurchases', () => {
         const {sut,cacheStore} = makeSut();
         const purchases = mockPurchases();
 
-
         const promisse = sut.save(purchases);
         expect(cacheStore.deleteCallsCount).toBe(1);
         expect(cacheStore.insertCallsCount).toBe(1);
@@ -55,8 +54,6 @@ describe('LocalSAvePurchases', () => {
         });
         await expect(promisse).resolves.not.toThrow();
         await expect(promisse).resolves.toBeFalsy();
-
-
     })
 
     test('Should throw if insert throws', async () => {
