@@ -5,6 +5,7 @@ import {LocalSavePurchases} from '@/data/usecases/'
 
 class CacheStoreSpy implements ICacheStore{
   
+    insertCallsCount = 0;
     deleteCallsCount = 0;
     key:string;
 
@@ -39,5 +40,15 @@ describe('LocalSAvePurchases', () => {
         await sut.save();
         expect(cacheStore.deleteCallsCount).toBe(1);
         expect(cacheStore.key).toBe("purchases");
+    })
+
+    test('Should not insert new cache if delete fails', async () => {
+
+        const {sut,cacheStore} = makeSut();
+        jest.spyOn(cacheStore,'delete').mockImplementationOnce(() => {throw new Error()});
+
+        expect(cacheStore.insertCallsCount).toBe(0);
+        const promise = sut.save();
+        expect(promise).rejects.toThrow();
     })
 })
