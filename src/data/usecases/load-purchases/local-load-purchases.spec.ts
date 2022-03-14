@@ -16,14 +16,24 @@ describe('LocalLoadPurchases', () => {
     test('Should not delete or insert cache on sut.init', () => {
         const { cacheStore } = makeSut()
         expect(cacheStore.actions).toEqual([])
-  })
+    })
 
     test('Shuold call correct key on load', async () => {
         const {sut, cacheStore } = makeSut()
         await sut.loadAll();
         expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch])
         expect(cacheStore.fetchKey).toBe('purchases')
-  })
+    })
+
+    test('Should return empty list if load fails', async () => {
+        const {sut, cacheStore } = makeSut()
+        cacheStore.simuleFethError();
+        const resultado = await sut.loadAll();
+        expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch,CacheStoreSpy.Action.delete])
+        expect(cacheStore.deleteKey).toBe('purchases');
+        expect(resultado).toEqual([]);
+    })
+
 
 
 })
