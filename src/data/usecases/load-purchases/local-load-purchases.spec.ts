@@ -79,7 +79,26 @@ describe('LocalLoadPurchases', () => {
         expect(cacheStore.fetchKey).toBe('purchases');
         expect(cacheStore.deleteKey).toBe('purchases');
         expect(resultado).toEqual([]);
+    });
+
+    test('Should return an empty list if cache is empty', async () => {
+
+        const currentDate = new Date();
+        const timestamp = new Date(currentDate);
+        timestamp.setDate(timestamp.getDate()-3);
+        timestamp.setSeconds(timestamp.getSeconds()+1)
+        const {sut, cacheStore } = makeSut(timestamp);
+        cacheStore.fetchResult = {
+            timestamp,
+            value: []
+        };
+        const resultado = await sut.loadAll();
+        expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch]);
+        expect(cacheStore.fetchKey).toBe('purchases')
+        expect(resultado).toEqual([])
     })
+
+    
 
 
 
