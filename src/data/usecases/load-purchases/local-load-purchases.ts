@@ -1,4 +1,4 @@
-import { ICacheStore } from '@/data/protocols/cache'
+import { CachePolicy, ICacheStore } from '@/data/protocols/cache'
 import { SavePurchases,LoadPurchases } from '@/domain/usecases/';
 import { channel } from 'diagnostics_channel';
 
@@ -20,10 +20,8 @@ export class LocalLoadPurchases implements SavePurchases, LoadPurchases{
         try {
            
             const cache = this.cacheStore.fetch(this.key); 
-            const maxAge = new Date(cache.timestamp);
-            maxAge.setDate(maxAge.getDate() +3 )
-            
-            if (maxAge > this.currentDate){
+                 
+            if (CachePolicy.validate(cache.timestamp,this.currentDate)){
                 return cache.value;
             }
 
