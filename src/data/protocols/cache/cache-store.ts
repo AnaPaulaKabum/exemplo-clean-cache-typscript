@@ -3,4 +3,5 @@ export interface ICacheStore{
 
     delete(key:string) : void;
     insert(savePurchases : any, key:string):void;
+    fetch (key: string): any;
 }

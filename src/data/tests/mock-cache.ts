@@ -20,7 +20,7 @@ export class CacheStoreSpy implements ICacheStore{
       this.actions.push(CacheStoreSpy.Action.delete)
       this.deleteKey = key
     }
-  
+    
     insert (value: any,key: string, ): void {
       this.actions.push(CacheStoreSpy.Action.insert)
       this.insertKey = key
