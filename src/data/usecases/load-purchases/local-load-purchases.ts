@@ -1,5 +1,6 @@
 import { ICacheStore } from '@/data/protocols/cache'
 import { SavePurchases,LoadPurchases } from '@/domain/usecases/';
+import { channel } from 'diagnostics_channel';
 
 export class LocalLoadPurchases implements SavePurchases, LoadPurchases{
 
@@ -17,9 +18,17 @@ export class LocalLoadPurchases implements SavePurchases, LoadPurchases{
     async loadAll(): Promise<Array<LoadPurchases.Result>>{
         
         try {
-           const cache = this.cacheStore.fetch(this.key); 
-           return cache.value;
            
+            const cache = this.cacheStore.fetch(this.key); 
+            const maxAge = new Date(cache.timestamp);
+            maxAge.setDate(maxAge.getDate() +3 )
+            
+            if (maxAge > this.currentDate){
+                return cache.value;
+            }
+
+            throw new Error();
+                       
        } catch (error) {
            this.cacheStore.delete(this.key);
            return [];

@@ -14,11 +14,13 @@ const makeSut = (timestamp = new Date()): SutTypes => {
 describe('LocalLoadPurchases', () => {
     
     test('Should not delete or insert cache on sut.init', () => {
+
         const { cacheStore } = makeSut()
         expect(cacheStore.actions).toEqual([])
     })
 
     test('Should return empty list if load fails', async () => {
+
         const {sut, cacheStore } = makeSut();
         cacheStore.simuleFethError();
         const resultado = await sut.loadAll();
@@ -27,8 +29,12 @@ describe('LocalLoadPurchases', () => {
         expect(resultado).toEqual([]);
     })
 
-    test('Should return a list of purchases if cacje os çess tjam 3 days old', async () => {
-        const timestamp = new Date();
+    test('Should return a list of purchases if cache os less than 3 days old', async () => {
+
+        const currentDate = new Date();
+        const timestamp = new Date(currentDate);
+        timestamp.setDate(timestamp.getDate()-3);
+        timestamp.setSeconds(timestamp.getSeconds()+1)
         const {sut, cacheStore } = makeSut(timestamp);
         cacheStore.fetchResult = {
             timestamp,
@@ -38,6 +44,24 @@ describe('LocalLoadPurchases', () => {
         expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch]);
         expect(resultado).toEqual(cacheStore.fetchResult.value)
         expect(cacheStore.fetchKey).toBe('purchases')
+    })
+
+    test('Should return an empty list if cache is more than 3 days old', async () => {
+
+        const currentDate = new Date();
+        const timestamp = new Date(currentDate);
+        timestamp.setDate(timestamp.getDate()-3);
+        timestamp.setSeconds(timestamp.getSeconds()- 1)
+        const {sut, cacheStore } = makeSut(currentDate);
+        cacheStore.fetchResult = {
+            timestamp,
+            value: mockPurchases()
+        };
+        const resultado = await sut.loadAll();
+        expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch,CacheStoreSpy.Action.delete]);
+        expect(cacheStore.fetchKey).toBe('purchases')
+        expect(cacheStore.deleteKey).toBe('purchases')
+        expect(resultado).toEqual([])
     })
 
 
