@@ -18,7 +18,7 @@ describe('LocalLoadPurchases', () => {
         expect(cacheStore.actions).toEqual([])
   })
 
-    test('Should not delete or insert cache on sut.init', async () => {
+    test('Shuold call correct key on load', async () => {
         const {sut, cacheStore } = makeSut()
         await sut.loadAll();
         expect(cacheStore.actions).toEqual([CacheStoreSpy.Action.fetch])
